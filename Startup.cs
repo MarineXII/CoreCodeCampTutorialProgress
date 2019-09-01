@@ -21,7 +21,7 @@ namespace CoreCodeCamp
     {
         services.AddDbContext<CampContext>();
             services.AddScoped<ICampRepository, CampRepository>();
-            services.AddAutoMapper();
+            services.AddAutoMapper(typeof(Startup));
         services.AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
     }

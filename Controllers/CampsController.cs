@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CoreCodeCamp.Cotrollers {
-    [Route("api/[controller]")] //Handles <url>/api/
+    [Route("api/[controller]")] //Handles <url>/api/camps
     public class CampsController : ControllerBase {
         private readonly ICampRepository _repository;
         private readonly IMapper _mapper;
@@ -38,7 +38,20 @@ namespace CoreCodeCamp.Cotrollers {
                 if (result == null)
                     return NotFound();
 
-                return _mapper.Map<CampModel>(result);
+                return Ok(_mapper.Map<CampModel>(result));
+            } catch (Exception) {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<CampModel[]>> SearchByDate(DateTime theDate, bool includeTalks = false) {
+            try {
+                var results = await _repository.GetAllCampsByEventDate(theDate, includeTalks);
+                if (!results.Any())
+                    return NotFound();
+
+                return Ok(_mapper.Map<CampModel[]>(results));
             } catch (Exception) {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
