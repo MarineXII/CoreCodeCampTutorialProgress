@@ -22,7 +22,7 @@ namespace CoreCodeCamp.Cotrollers {
             _linkGenerator = linkGenerator;
         }
 
-        [HttpGet] //Specifies it is a get request
+        [HttpGet("general")] //Specifies it is a get request
         public async Task<ActionResult<CampModel[]>> Get(bool includeTalks = false) {
             try {
                 var results = await _repository.GetAllCampsAsync(includeTalks);
@@ -33,7 +33,7 @@ namespace CoreCodeCamp.Cotrollers {
             }
         }
 
-        [HttpGet("{moniker}")]
+        [HttpGet("specific/{moniker}")]
         public async Task<ActionResult<CampModel>> Get(string moniker) {
             try {
                 var result = await _repository.GetCampAsync(moniker);
@@ -60,10 +60,10 @@ namespace CoreCodeCamp.Cotrollers {
             }
         }
 
-        [HttpPost("/add")]
-        public async Task<ActionResult<CampModel>> addPost(CampModel model) {
+        [HttpPost("add")]
+        public async Task<ActionResult<CampModel>> add(CampModel model) {
             try {
-                var tempModel = _repository.GetCampAsync(model.Moniker);
+                var tempModel = await _repository.GetCampAsync(model.Moniker);
 
                 if (tempModel != null) {
                     return BadRequest("Moniker in use!");
@@ -89,8 +89,8 @@ namespace CoreCodeCamp.Cotrollers {
             return BadRequest();
         }
 
-        [HttpPut("/update")]
-        public async Task<ActionResult<CampModel>> Put(string moniker, CampModel model) {
+        [HttpPut("update")]
+        public async Task<ActionResult<CampModel>> update(string moniker, CampModel model) {
             try {
                 var oldCamp = await _repository.GetCampAsync(moniker);
 
