@@ -1,11 +1,10 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CoreCodeCamp.Data;
 using CoreCodeCamp.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace CoreCodeCamp.Cotrollers {
             _mapper = mapper;
             _linkGenerator = linkGenerator;
         }
-        
+
         [HttpGet] //Specifies it is a get request
         public async Task<ActionResult<CampModel[]>> Get(bool includeTalks = false) {
             try {
@@ -61,7 +60,8 @@ namespace CoreCodeCamp.Cotrollers {
             }
         }
 
-        public async Task<ActionResult<CampModel>> Post(CampModel model) {
+        [HttpPost("/add")]
+        public async Task<ActionResult<CampModel>> addPost(CampModel model) {
             try {
                 var tempModel = _repository.GetCampAsync(model.Moniker);
 
@@ -69,7 +69,7 @@ namespace CoreCodeCamp.Cotrollers {
                     return BadRequest("Moniker in use!");
                 }
 
-                var location = _linkGenerator.GetPathByAction("Get", "Camps", new {moniker = model.Moniker });
+                var location = _linkGenerator.GetPathByAction("Get", "Camps", new { moniker = model.Moniker });
 
                 if (string.IsNullOrWhiteSpace(location)) {
                     return BadRequest("Could not use current moniker!");
@@ -89,8 +89,7 @@ namespace CoreCodeCamp.Cotrollers {
             return BadRequest();
         }
 
-        /* Put is producing errors */
-
+        [HttpPut("/update")]
         public async Task<ActionResult<CampModel>> Put(string moniker, CampModel model) {
             try {
                 var oldCamp = await _repository.GetCampAsync(moniker);
