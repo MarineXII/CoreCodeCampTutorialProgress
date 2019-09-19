@@ -112,8 +112,11 @@ namespace CoreCodeCamp.Cotrollers
         }
 
         [HttpPut("update")]
-        public async Task<ActionResult<CampModel>> update(string moniker, CampModel model)
+        public async Task<ActionResult<CampModel>> update(Tuple<string, CampModel> para_tuple)
         {
+            string moniker = para_tuple.Item1;
+            CampModel model = para_tuple.Item2;
+
             try
             {
                 var oldCamp = await _repository.GetCampAsync(moniker);
@@ -134,6 +137,34 @@ namespace CoreCodeCamp.Cotrollers
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
+            return BadRequest();
+        }
+
+        [HttpDelete("delete/{moniker}")]
+        public async Task<IActionResult> deleteMoniker(string moniker)
+        {
+            try
+            {
+                var oldCamp = await _repository.GetCampAsync(moniker);
+
+                if (oldCamp == null)
+                {
+                    return NotFound();
+                }
+
+                _repository.Delete(oldCamp);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+
+            } 
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+
             return BadRequest();
         }
     }
