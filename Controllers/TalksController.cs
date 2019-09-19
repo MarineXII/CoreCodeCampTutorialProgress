@@ -74,7 +74,10 @@ namespace CoreCodeCamp.Controllers
                 _repository.Add(talk);
 
                 if (await _repository.SaveChangesAsync()) {
-                    var location = _linkGenerator.GetPathByAction("Get", "Talks", values: new { moniker, id = talk.TalkId });
+                    var location = _linkGenerator.GetPathByAction(
+                                        HttpContext,
+                                        "specificGet",
+                                        values: new { moniker = moniker, id = talk.TalkId });
 
                     return Created(location, _mapper.Map<TalkModel>(talk));
                 } else {
