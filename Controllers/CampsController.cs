@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreCodeCamp.Cotrollers
+namespace CoreCodeCamp.Controllers
 {
     [Route("api/[controller]")] //Handles <url>/api/camps
     [ApiController]
