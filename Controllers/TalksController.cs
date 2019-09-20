@@ -88,5 +88,34 @@ namespace CoreCodeCamp.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");
             } 
         }
+
+        //Include talkId in model being passed in the body of the request
+        [HttpPut("id={id:int}/update")]
+        public async Task<ActionResult<TalkModel>> updateTalk(string moniker, int id, TalkModel model) {
+            try {
+                var talk = await _repository.GetTalkByMonikerAsync(moniker, id, true);
+
+                if (talk == null) return NotFound("Talk not found!");
+
+                _mapper.Map(model, talk);
+
+                if (model.Speaker != null) {
+                    var speaker = await _repository.GetSpeakerAsync(model.Speaker.SpeakerId);
+
+                    if (speaker != null) {
+                        talk.Speaker = speaker;
+                    }
+                }
+
+                if (await _repository.SaveChangesAsync()) {
+                    return _mapper.Map<TalkModel>(talk);
+                }
+
+                return BadRequest("Database update failed");
+
+            } catch (Exception) {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");
+            }
+        }
     }
 }
